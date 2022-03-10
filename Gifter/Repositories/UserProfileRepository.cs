@@ -154,69 +154,62 @@ namespace Gifter.Repositories
             }
         }
 
-        //public Post GetByIdWithComments(int id)
-        //{
-        //    using (var conn = Connection)
-        //    {
-        //        conn.Open();
-        //        using (var cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText = @"
-        //                  SELECT p.Title, p.Caption, p.DateCreated AS PostDateCreated, p.ImageUrl AS PostImageUrl, p.UserProfileId AS PostUserProfileId,
-        //                         up.Name, up.Email, up.DateCreated AS UserProfileDateCreated, up.ImageUrl AS UserProfileImageUrl,
-        //                         c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId
-        //                    FROM Post p
-        //                    LEFT JOIN UserProfile up ON up.Id = p.UserProfileId
-        //                    LEFT JOIN Comment c ON c.PostId = p.Id
-        //                   WHERE p.Id = @Id";
+        public UserProfile GetByIdWithPosts(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                          SELECT up.Name, up.Bio, up.Email, up.DateCreated AS UserProfileDateCreated, up.ImageUrl AS UserProfileImageUrl,
+                                 p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated, p.ImageUrl AS PostImageUrl
+                                 
+                            FROM UserProfile up
+                            LEFT JOIN Post p ON up.Id = p.UserProfileId
+                           WHERE up.Id = @Id";
 
-        //            DbUtils.AddParameter(cmd, "@Id", id);
+                    DbUtils.AddParameter(cmd, "@Id", id);
 
-        //            var reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
 
-        //            Post post = null;
-        //            while (reader.Read())
-        //            {
-        //                if (post == null)
-        //                {
-        //                    post = new Post()
-        //                    {
-        //                        Id = id,
-        //                        Title = DbUtils.GetString(reader, "Title"),
-        //                        Caption = DbUtils.GetString(reader, "Caption"),
-        //                        DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-        //                        ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-        //                        UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
-        //                        UserProfile = new UserProfile()
-        //                        {
-        //                            Id = DbUtils.GetInt(reader, "PostUserProfileId"),
-        //                            Name = DbUtils.GetString(reader, "Name"),
-        //                            Email = DbUtils.GetString(reader, "Email"),
-        //                            DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-        //                            ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl")
-        //                        },
-        //                        Comments = new List<Comment>()
-        //                    };
-        //                }
+                    UserProfile user = null;
+                    while (reader.Read())
+                    {
+                        if (user == null)
+                        {
+                            user = new UserProfile()
+                            {
+                                Id = id,
+                                Name = DbUtils.GetString(reader, "Name"),
+                                Email = DbUtils.GetString(reader, "Email"),
+                                ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
+                                Bio = DbUtils.GetString(reader, "Bio"),
+                                DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
+                                Posts = new List<Post>()
+                            };
+                        }
 
-        //                if (DbUtils.IsNotDbNull(reader, "CommentId"))
-        //                {
-        //                    post.Comments.Add(new Comment()
-        //                    {
-        //                        Id = DbUtils.GetInt(reader, "CommentId"),
-        //                        Message = DbUtils.GetString(reader, "Message"),
-        //                        PostId = id,
-        //                        UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId")
-        //                    });
-        //                }
-        //            }
+                        if (DbUtils.IsNotDbNull(reader, "PostId"))
+                        {
+                            user.Posts.Add(new Post()
+                            {
+                                Id = DbUtils.GetInt(reader, "PostId"),
+                                Title = DbUtils.GetString(reader, "Title"),
+                                Caption = DbUtils.GetString(reader, "Caption"),
+                                DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
+                                ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
+                                UserProfileId = id
+                            });
+                        }
+                    }
 
-        //            reader.Close();
+                    reader.Close();
 
-        //            return post;
-        //        }
-        //    }
-        //}
+                    return user;
+                }
+            }
+        }
 
         public void Add(UserProfile user)
         {
