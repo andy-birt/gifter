@@ -218,70 +218,70 @@ namespace Gifter.Repositories
         //    }
         //}
 
-        //public void Add(Post post)
-        //{
-        //    using (var conn = Connection)
-        //    {
-        //        conn.Open();
-        //        using (var cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText = @"
-        //                INSERT INTO Post (Title, Caption, DateCreated, ImageUrl, UserProfileId)
-        //                OUTPUT INSERTED.ID
-        //                VALUES (@Title, @Caption, @DateCreated, @ImageUrl, @UserProfileId)";
+        public void Add(UserProfile user)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO UserProfile ([Name], [Email], [ImageUrl], [Bio], [DateCreated])
+                        OUTPUT INSERTED.ID
+                        VALUES (@Name, @Email, @ImageUrl, @Bio, @DateCreated)";
 
-        //            DbUtils.AddParameter(cmd, "@Title", post.Title);
-        //            DbUtils.AddParameter(cmd, "@Caption", post.Caption);
-        //            DbUtils.AddParameter(cmd, "@DateCreated", post.DateCreated);
-        //            DbUtils.AddParameter(cmd, "@ImageUrl", post.ImageUrl);
-        //            DbUtils.AddParameter(cmd, "@UserProfileId", post.UserProfileId);
+                    DbUtils.AddParameter(cmd, "@Name", user.Name);
+                    DbUtils.AddParameter(cmd, "@Email", user.Email);
+                    DbUtils.AddParameter(cmd, "@Bio", user.Bio);
+                    DbUtils.AddParameter(cmd, "@ImageUrl", user.ImageUrl);
+                    DbUtils.AddParameter(cmd, "@DateCreated", user.DateCreated);
 
-        //            post.Id = (int)cmd.ExecuteScalar();
-        //        }
-        //    }
-        //}
+                    user.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
 
-        //public void Update(Post post)
-        //{
-        //    using (var conn = Connection)
-        //    {
-        //        conn.Open();
-        //        using (var cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText = @"
-        //                UPDATE Post
-        //                   SET Title = @Title,
-        //                       Caption = @Caption,
-        //                       DateCreated = @DateCreated,
-        //                       ImageUrl = @ImageUrl,
-        //                       UserProfileId = @UserProfileId
-        //                 WHERE Id = @Id";
+        public void Update(UserProfile user)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        UPDATE UserProfile
+                           SET Name = @Name,
+                               Email = @Email,
+                               Bio = @Bio,
+                               ImageUrl = @ImageUrl,
+                               DateCreated = @DateCreated
+                         WHERE Id = @Id";
 
-        //            DbUtils.AddParameter(cmd, "@Title", post.Title);
-        //            DbUtils.AddParameter(cmd, "@Caption", post.Caption);
-        //            DbUtils.AddParameter(cmd, "@DateCreated", post.DateCreated);
-        //            DbUtils.AddParameter(cmd, "@ImageUrl", post.ImageUrl);
-        //            DbUtils.AddParameter(cmd, "@UserProfileId", post.UserProfileId);
-        //            DbUtils.AddParameter(cmd, "@Id", post.Id);
+                    DbUtils.AddParameter(cmd, "@Name", user.Name);
+                    DbUtils.AddParameter(cmd, "@Email", user.Email);
+                    DbUtils.AddParameter(cmd, "@Bio", user.Bio);
+                    DbUtils.AddParameter(cmd, "@ImageUrl", user.ImageUrl);
+                    DbUtils.AddParameter(cmd, "@DateCreated", user.DateCreated);
+                    DbUtils.AddParameter(cmd, "@Id", user.Id);
 
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //    }
-        //}
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
 
-        //public void Delete(int id)
-        //{
-        //    using (var conn = Connection)
-        //    {
-        //        conn.Open();
-        //        using (var cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText = "DELETE FROM Post WHERE Id = @Id";
-        //            DbUtils.AddParameter(cmd, "@id", id);
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //    }
-        //}
+        public void Delete(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM UserProfile WHERE Id = @Id";
+                    DbUtils.AddParameter(cmd, "@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
 

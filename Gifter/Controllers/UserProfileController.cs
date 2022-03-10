@@ -20,6 +20,14 @@ namespace Gifter.Controllers
         {
             return Ok(_userRepository.GetAll());
         }
+        
+        [HttpPost]
+        public IActionResult Post(UserProfile user)
+        {
+            _userRepository.Add(user);
+            return CreatedAtAction("Get", new { id = user.Id }, user);
+        }
+
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -29,6 +37,25 @@ namespace Gifter.Controllers
                 return NotFound();
             }
             return Ok(user);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, UserProfile user)
+        {
+            if(id != user.Id)
+            {
+                return BadRequest();
+            }
+
+            _userRepository.Update(user);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _userRepository.Delete(id);
+            return NoContent();
         }
     }
 }
