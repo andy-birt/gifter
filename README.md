@@ -43,10 +43,10 @@ VALUES
   (7, 4, 5, 'I love the fact this was posted on 4/20'),
   (8, 3, 2, 'He''s not going to...'),
   (9, 5, 2, 'I''m not doing anything wrong myb'),
-  (10, 6, 6, 'What?'),
-  (11, 7, 6, 'Huh?'),
-  (12, 5, 6, 'Hmm...'),
-  (13, 4, 6, 'What''s going on?')
+  (10, 6, 1, 'What?'),
+  (11, 7, 1, 'Huh?'),
+  (12, 5, 1, 'Hmm...'),
+  (13, 4, 1, 'What''s going on?')
 SET IDENTITY_INSERT [Comment] OFF
 ```
 
