@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Data.SqlClient;
 using Gifter.Models;
 using Gifter.Utils;
 
@@ -36,23 +37,7 @@ namespace Gifter.Repositories
                     var posts = new List<Post>();
                     while (reader.Read())
                     {
-                        posts.Add(new Post()
-                        {
-                            Id = DbUtils.GetInt(reader, "PostId"),
-                            Title = DbUtils.GetString(reader, "Title"),
-                            Caption = DbUtils.GetString(reader, "Caption"),
-                            DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                            ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-                            UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
-                            UserProfile = new UserProfile()
-                            {
-                                Id = DbUtils.GetInt(reader, "PostUserProfileId"),
-                                Name = DbUtils.GetString(reader, "Name"),
-                                Email = DbUtils.GetString(reader, "Email"),
-                                DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                                ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
-                            },
-                        });
+                        posts.Add( NewPostFromReader( reader ) );
                     }
 
                     reader.Close();
@@ -98,37 +83,14 @@ namespace Gifter.Repositories
                         var existingPost = posts.FirstOrDefault(p => p.Id == postId);
                         if (existingPost == null)
                         {
-                            existingPost = new Post()
-                            {
-                                Id = postId,
-                                Title = DbUtils.GetString(reader, "Title"),
-                                Caption = DbUtils.GetString(reader, "Caption"),
-                                DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                                ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-                                UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
-                                UserProfile = new UserProfile()
-                                {
-                                    Id = DbUtils.GetInt(reader, "PostUserProfileId"),
-                                    Name = DbUtils.GetString(reader, "Name"),
-                                    Email = DbUtils.GetString(reader, "Email"),
-                                    DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                                    ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
-                                },
-                                Comments = new List<Comment>()
-                            };
+                            existingPost = NewPostFromReader(postId, reader);
 
                             posts.Add(existingPost);
                         }
 
                         if (DbUtils.IsNotDbNull(reader, "CommentId"))
                         {
-                            existingPost.Comments.Add(new Comment()
-                            {
-                                Id = DbUtils.GetInt(reader, "CommentId"),
-                                Message = DbUtils.GetString(reader, "Message"),
-                                PostId = postId,
-                                UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId")
-                            });
+                            existingPost.Comments.Add( NewCommentFromReader(postId, reader) );
                         }
                     }
 
@@ -163,23 +125,7 @@ namespace Gifter.Repositories
                     Post post = null;
                     if (reader.Read())
                     {
-                        post = new Post()
-                        {
-                            Id = id,
-                            Title = DbUtils.GetString(reader, "Title"),
-                            Caption = DbUtils.GetString(reader, "Caption"),
-                            DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                            ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-                            UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
-                            UserProfile = new UserProfile()
-                            {
-                                Id = DbUtils.GetInt(reader, "PostUserProfileId"),
-                                Name = DbUtils.GetString(reader, "Name"),
-                                Email = DbUtils.GetString(reader, "Email"),
-                                DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                                ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl")
-                            }
-                        };
+                        post = NewPostFromReader(id, reader);
                     }
 
                     reader.Close();
@@ -219,35 +165,12 @@ namespace Gifter.Repositories
                     {
                         if (post == null)
                         {
-                            post = new Post()
-                            {
-                                Id = id,
-                                Title = DbUtils.GetString(reader, "Title"),
-                                Caption = DbUtils.GetString(reader, "Caption"),
-                                DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                                ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-                                UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
-                                UserProfile = new UserProfile()
-                                {
-                                    Id = DbUtils.GetInt(reader, "PostUserProfileId"),
-                                    Name = DbUtils.GetString(reader, "Name"),
-                                    Email = DbUtils.GetString(reader, "Email"),
-                                    DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                                    ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl")
-                                },
-                                Comments = new List<Comment>()
-                            };
+                            post = NewPostFromReader(id, reader);
                         }
 
                         if (DbUtils.IsNotDbNull(reader, "CommentId"))
                         {
-                            post.Comments.Add(new Comment()
-                            {
-                                Id = DbUtils.GetInt(reader, "CommentId"),
-                                Message = DbUtils.GetString(reader, "Message"),
-                                PostId = id,
-                                UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId")
-                            });
+                            post.Comments.Add( NewCommentFromReader(id, reader) );
                         }
                     }
 
@@ -294,23 +217,7 @@ namespace Gifter.Repositories
                     var posts = new List<Post>();
                     while (reader.Read())
                     {
-                        posts.Add(new Post()
-                        {
-                            Id = DbUtils.GetInt(reader, "PostId"),
-                            Title = DbUtils.GetString(reader, "Title"),
-                            Caption = DbUtils.GetString(reader, "Caption"),
-                            DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                            ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-                            UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
-                            UserProfile = new UserProfile()
-                            {
-                                Id = DbUtils.GetInt(reader, "PostUserProfileId"),
-                                Name = DbUtils.GetString(reader, "Name"),
-                                Email = DbUtils.GetString(reader, "Email"),
-                                DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                                ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
-                            },
-                        });
+                        posts.Add( NewPostFromReader( reader ) );
                     }
 
                     reader.Close();
@@ -349,23 +256,7 @@ namespace Gifter.Repositories
                     var posts = new List<Post>();
                     while (reader.Read())
                     {
-                        posts.Add(new Post()
-                        {
-                            Id = DbUtils.GetInt(reader, "PostId"),
-                            Title = DbUtils.GetString(reader, "Title"),
-                            Caption = DbUtils.GetString(reader, "Caption"),
-                            DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                            ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-                            UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
-                            UserProfile = new UserProfile()
-                            {
-                                Id = DbUtils.GetInt(reader, "PostUserProfileId"),
-                                Name = DbUtils.GetString(reader, "Name"),
-                                Email = DbUtils.GetString(reader, "Email"),
-                                DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                                ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
-                            },
-                        });
+                        posts.Add( NewPostFromReader( reader ) );
                     }
 
                     reader.Close();
@@ -442,10 +333,98 @@ namespace Gifter.Repositories
 
         /******
          *
+         *  Object Instance Helpers
+         *
+         ******/
+
+        /// <summary>
+        ///  Create a new post using the reader.
+        /// </summary>
+        /// <param name="id">The Id that references the Post.</param>
+        /// <param name="reader">A SqlDataReader that has not exhausted it's result set.</param>
+        /// <returns>A new Post object along with the User that created it.</returns>
+        private Post NewPostFromReader(int id, SqlDataReader reader)
+        {
+            return new Post()
+            {
+                Id = id,
+                Title = DbUtils.GetString(reader, "Title"),
+                Caption = DbUtils.GetString(reader, "Caption"),
+                DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
+                ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
+                UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
+                UserProfile = new UserProfile()
+                {
+                    Id = DbUtils.GetInt(reader, "PostUserProfileId"),
+                    Name = DbUtils.GetString(reader, "Name"),
+                    Email = DbUtils.GetString(reader, "Email"),
+                    DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
+                    ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
+                },
+                Comments = new List<Comment>()
+            };
+        }
+
+        /// <summary>
+        ///  Create a new post using the reader.
+        /// </summary>
+        /// <param name="reader">A SqlDataReader that has not exhausted it's result set.</param>
+        /// <returns>A new Post object along with the User that created it.</returns>
+        private Post NewPostFromReader(SqlDataReader reader)
+        {
+            return new Post()
+            {
+                Id = DbUtils.GetInt(reader, "PostId"),
+                Title = DbUtils.GetString(reader, "Title"),
+                Caption = DbUtils.GetString(reader, "Caption"),
+                DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
+                ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
+                UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
+                UserProfile = new UserProfile()
+                {
+                    Id = DbUtils.GetInt(reader, "PostUserProfileId"),
+                    Name = DbUtils.GetString(reader, "Name"),
+                    Email = DbUtils.GetString(reader, "Email"),
+                    DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
+                    ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
+                },
+                Comments = new List<Comment>()
+            };
+        }
+
+        /// <summary>
+        ///  Create a new comment using the reader.
+        /// </summary>
+        /// <param name="postId">The PostId that references the Post the comment belongs to.</param>
+        /// <param name="reader">A SqlDataReader that has not exhausted it's result set.</param>
+        /// <returns>A new Comment object.</returns>
+        private Comment NewCommentFromReader(int postId, SqlDataReader reader)
+        {
+            return new Comment()
+            {
+                Id = DbUtils.GetInt(reader, "CommentId"),
+                Message = DbUtils.GetString(reader, "Message"),
+                PostId = postId,
+                UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId")
+            };
+        }
+
+        /******
+         *
          *  SQL Command String Helpers
          *
          ******/
 
+        /// <summary>
+        ///  A Select statement which pulls the necessary Post columns and User columns.
+        /// </summary>
+        /// <value>
+        ///     SELECT p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated, 
+        ///            p.ImageUrl AS PostImageUrl, p.UserProfileId AS PostUserProfileId,
+        ///            up.Name, up.Bio, up.Email, up.DateCreated AS UserProfileDateCreated, 
+        ///            up.ImageUrl AS UserProfileImageUrl
+        /// </value>
+        /// <returns>A partial SQL command string.</returns>
         private string SelectPostUserStatement()
         {
             return @"SELECT p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated, 
@@ -456,6 +435,14 @@ namespace Gifter.Repositories
                             ";
         }
 
+        /// <summary>
+        ///  An addition to the Post/User Select statement which pulls the necessary Comment columns.
+        ///  Use this in addition to SelectPostUserStatement().
+        /// </summary>
+        /// <value>
+        ///     c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId
+        /// </value>
+        /// <returns>An additional partial SQL command string to use with SelectPostUserStatement().</returns>
         private string WithComments()
         {
             return @",
@@ -464,6 +451,14 @@ namespace Gifter.Repositories
                     ";
         }
 
+        /// <summary>
+        ///  The FROM sequence of the SQL SELECT statement. It can complete a SQL statement when used with SelectPostUserStatement().
+        /// </summary>
+        /// <value>
+        ///     FROM Post p
+        ///          LEFT JOIN UserProfile up ON p.UserProfileId = up.id
+        /// </value>
+        /// <returns>A partial SQL command string.</returns>
         private string FromPostJoinUser()
         {
             return @"FROM Post p
@@ -471,12 +466,26 @@ namespace Gifter.Repositories
                           ";
         }
 
+        /// <summary>
+        ///  A LEFT JOIN Comment statement for joining onto an existing command string
+        /// </summary>
+        /// <value>
+        ///   LEFT JOIN Comment c on c.PostId = p.id
+        /// </value>
+        /// <returns>A partial SQL command string.</returns>
         private string JoinComments()
         {
             return @"LEFT JOIN Comment c on c.PostId = p.id
                     ";
         }
 
+        /// <summary>
+        ///  An ORDER BY statement which will order by a Post's created date
+        /// </summary>
+        /// <value>
+        ///   ORDER BY p.DateCreated
+        /// </value>
+        /// <returns>A partial SQL command string.</returns>
         private string OrderByPostDateCreated()
         {
             return @"ORDER BY p.DateCreated";
