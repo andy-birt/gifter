@@ -46,77 +46,6 @@ namespace Gifter.Repositories
             }
         }
 
-        //public List<UserProfile> GetAllWithComments()
-        //{
-        //    using (var conn = Connection)
-        //    {
-        //        conn.Open();
-        //        using (var cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText = @"
-        //                SELECT p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated,
-        //                       p.ImageUrl AS PostImageUrl, p.UserProfileId AS PostUserProfileId,
-
-        //                       up.Name, up.Bio, up.Email, up.DateCreated AS UserProfileDateCreated,
-        //                       up.ImageUrl AS UserProfileImageUrl,
-
-        //                       c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId
-        //                  FROM Post p
-        //                       LEFT JOIN UserProfile up ON p.UserProfileId = up.id
-        //                       LEFT JOIN Comment c on c.PostId = p.id
-        //              ORDER BY p.DateCreated";
-
-        //            var reader = cmd.ExecuteReader();
-
-        //            var posts = new List<Post>();
-        //            while (reader.Read())
-        //            {
-        //                var postId = DbUtils.GetInt(reader, "PostId");
-
-        //                var existingPost = posts.FirstOrDefault(p => p.Id == postId);
-        //                if (existingPost == null)
-        //                {
-        //                    existingPost = new Post()
-        //                    {
-        //                        Id = postId,
-        //                        Title = DbUtils.GetString(reader, "Title"),
-        //                        Caption = DbUtils.GetString(reader, "Caption"),
-        //                        DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-        //                        ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-        //                        UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
-        //                        UserProfile = new UserProfile()
-        //                        {
-        //                            Id = DbUtils.GetInt(reader, "PostUserProfileId"),
-        //                            Name = DbUtils.GetString(reader, "Name"),
-        //                            Email = DbUtils.GetString(reader, "Email"),
-        //                            DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-        //                            ImageUrl = DbUtils.GetString(reader, "UserProfileImageUrl"),
-        //                        },
-        //                        Comments = new List<Comment>()
-        //                    };
-
-        //                    posts.Add(existingPost);
-        //                }
-
-        //                if (DbUtils.IsNotDbNull(reader, "CommentId"))
-        //                {
-        //                    existingPost.Comments.Add(new Comment()
-        //                    {
-        //                        Id = DbUtils.GetInt(reader, "CommentId"),
-        //                        Message = DbUtils.GetString(reader, "Message"),
-        //                        PostId = postId,
-        //                        UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId")
-        //                    });
-        //                }
-        //            }
-
-        //            reader.Close();
-
-        //            return posts;
-        //        }
-        //    }
-        //}
-
         public UserProfile GetById(int id)
         {
             using (var conn = Connection)
@@ -154,19 +83,26 @@ namespace Gifter.Repositories
             }
         }
 
-        public UserProfile GetByIdWithPosts(int id)
+        public UserProfile GetByIdWithPosts(int id) // And Comments with each post
         {
             using (var conn = Connection)
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
+                    // So I know you're probably wondering why I'm left joining userprofile when
+                    // I am already using userprofile in the initial select from... well the answer is this...
+                    // I want to have user data associated with the comment
+                    // Pretty cool, huh?
                     cmd.CommandText = @"
                           SELECT up.Name, up.Bio, up.Email, up.DateCreated AS UserProfileDateCreated, up.ImageUrl AS UserProfileImageUrl,
-                                 p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated, p.ImageUrl AS PostImageUrl
-                                 
+                                 p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated, p.ImageUrl AS PostImageUrl,
+                                 c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId,
+                                 cup.Name AS CommentersName, cup.Email AS CommentersEmail, cup.ImageUrl AS CommentersImageUrl
                             FROM UserProfile up
                             LEFT JOIN Post p ON up.Id = p.UserProfileId
+                            LEFT JOIN Comment c ON c.PostId = p.Id
+                            LEFT JOIN UserProfile cup ON c.UserProfileId = cup.Id
                            WHERE up.Id = @Id";
 
                     DbUtils.AddParameter(cmd, "@Id", id);
@@ -174,6 +110,19 @@ namespace Gifter.Repositories
                     var reader = cmd.ExecuteReader();
 
                     UserProfile user = null;
+
+                    // Create a null post to add before db starts reading
+                    // This will actually prove to be very useful
+                    Post postToAdd = null;
+
+                    // At this point we are really iterating over comments between posts
+                    // rather than posts between a user (as we were in the previous exercise)
+                    // because there will be multiple comments on a single post
+                    // If you know that the reader is going to read each result it gets back
+                    // this is easier to understand and if you don't understand it
+                    // run this query or a similar one in a sql file and see how many times
+                    // you see the same post but each record outputs a different comment
+                    // Read over it for a little bit and I'm sure it will 
                     while (reader.Read())
                     {
                         if (user == null)
@@ -190,17 +139,66 @@ namespace Gifter.Repositories
                             };
                         }
 
+                        // While there is no null values for the post id were going
+                        // to be rather checking each comment
+                        // because each read is going to have
+                        // a different comment but we can still
+                        // have the same post id on multiple consecutive iterations
                         if (DbUtils.IsNotDbNull(reader, "PostId"))
                         {
-                            user.Posts.Add(new Post()
+                            // When the post id reading from the db of the comment is different than
+                            // the current post object in the loop then we will create a new post,
+                            // reassign postToAdd to the new post and insert the comments into it instead
+                            // So I create a variable to store the id of the post
+                            // the reader object is currently reading
+                            // then we're going to cross reference that id with
+                            // the post object's id (the one created in the loop) that's
+                            // going to be referenced between iterations
+                            int readingPostId = DbUtils.GetInt(reader, "PostId");
+
+                            // On the first iteration of reader.Read() postToAdd will be null
+                            
+                            // So create a new post object and assign the reference postToAdd to it
+
+                            // After iterating through comments with the same post id
+                            // the second condition in the 'if' will be triggered
+                            // forcing us to create another post object then reassigning
+                            // postToAdd and we will add the next set of comments to it rather than
+                            // creating a new post object each iteration of reader.Read()
+                            // or putting all of the comments into one post, possibly
+                            if (postToAdd == null || postToAdd.Id != readingPostId)
                             {
-                                Id = DbUtils.GetInt(reader, "PostId"),
-                                Title = DbUtils.GetString(reader, "Title"),
-                                Caption = DbUtils.GetString(reader, "Caption"),
-                                DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                                ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-                                UserProfileId = id
-                            });
+                                postToAdd = new Post()
+                                {
+                                    Id = DbUtils.GetInt(reader, "PostId"),
+                                    Title = DbUtils.GetString(reader, "Title"),
+                                    Caption = DbUtils.GetString(reader, "Caption"),
+                                    DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
+                                    ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
+                                    UserProfileId = id,
+                                    Comments = new List<Comment>()
+                                };
+
+                                user.Posts.Add(postToAdd);
+                            }
+
+                            if (DbUtils.IsNotDbNull(reader, "CommentId"))
+                            {
+                                postToAdd.Comments.Add(new Comment()
+                                {
+                                    Id = DbUtils.GetInt(reader, "CommentId"),
+                                    Message = DbUtils.GetString(reader, "Message"),
+                                    PostId = DbUtils.GetInt(reader, "PostId"),
+                                    UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId"),
+                                    UserProfile = new UserProfile()
+                                    {
+                                        Id = DbUtils.GetInt(reader, "CommentUserProfileId"),
+                                        Name = DbUtils.GetString(reader, "CommentersName"),
+                                        Email = DbUtils.GetString(reader, "CommentersEmail"),
+                                        ImageUrl = DbUtils.GetString(reader, "CommentersImageUrl")
+                                    }
+                                });
+                            }
                         }
                     }
 
