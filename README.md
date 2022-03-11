@@ -23,11 +23,11 @@ SET IDENTITY_INSERT [UserProfile] ON
 INSERT INTO [UserProfile]
   ([Id], [Name], [Email], [ImageUrl], [Bio], [DateCreated])
 VALUES 
-  (3, 'Andy Birt', 'andyb@email.com', null, null, '03-11-2022');
-  (4, 'Steve Powers', 'stevep@email.com', null, null, '03-11-2022');
-  (5, 'Jordan Twyman', 'jordant@email.com', null, null, '03-11-2022');
-  (6, 'Aki Endo', 'akie@email.com', null, null, '03-11-2022');
-  (7, 'Heaven Burdette', 'heavenb@email.com', null, null, '03-11-2022');
+  (3, 'Andy Birt', 'andyb@email.com', null, null, '03-11-2022'),
+  (4, 'Steve Powers', 'stevep@email.com', null, null, '03-11-2022'),
+  (5, 'Jordan Twyman', 'jordant@email.com', null, null, '03-11-2022'),
+  (6, 'Aki Endo', 'akie@email.com', null, null, '03-11-2022'),
+  (7, 'Heaven Burdette', 'heavenb@email.com', null, null, '03-11-2022')
 SET IDENTITY_INSERT [UserProfile] OFF
 
 -- Create some extra comments
@@ -35,18 +35,18 @@ SET IDENTITY_INSERT [Comment] ON
 INSERT INTO [Comment]
   ([Id], [UserProfileId], [PostId], [Message])
 VALUES
-  (2, 3, 2, 'No you stop!');
-  (3, 7, 3, 'I hope you like wearing red paint... or blood... we');
-  (4, 4, 4, 'Animals should be the leaders of humanity');
-  (5, 6, 4, 'Pandas are the leaders of humanity');
-  (6, 5, 5, 'HAHA yep');
-  (7, 4, 5, 'I love the fact this was posted on 4/20');
-  (8, 3, 2, 'He''s not going to...');
-  (9, 5, 2, 'I''m not doing anything wrong myb');
-  (10, 6, 6, 'What?');
-  (11, 7, 6, 'Huh?');
-  (12, 5, 6, 'Hmm...');
-  (13, 4, 6, 'What''s going on?');
+  (2, 3, 2, 'No you stop!'),
+  (3, 7, 3, 'I hope you like wearing red paint... or blood... we'),
+  (4, 4, 4, 'Animals should be the leaders of humanity'),
+  (5, 6, 4, 'Pandas are the leaders of humanity'),
+  (6, 5, 5, 'HAHA yep'),
+  (7, 4, 5, 'I love the fact this was posted on 4/20'),
+  (8, 3, 2, 'He''s not going to...'),
+  (9, 5, 2, 'I''m not doing anything wrong myb'),
+  (10, 6, 6, 'What?'),
+  (11, 7, 6, 'Huh?'),
+  (12, 5, 6, 'Hmm...'),
+  (13, 4, 6, 'What''s going on?')
 SET IDENTITY_INSERT [Comment] OFF
 ```
 
