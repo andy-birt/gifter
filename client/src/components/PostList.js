@@ -10,7 +10,7 @@ const PostList = () => {
   }, []);
 
   return (
-    <div>
+    <div className="container">
       {posts.map((post) => (
         <Post key={post.id} post={post} />
       ))}
