@@ -19,7 +19,7 @@ export const PostProvider = (props) => {
   };
 
   const getPost = (id) => {
-    return fetch(`/api/post/${id}`).then((res) => res.json());
+    return fetch(`/api/post/${id}/getwithcomments`).then((res) => res.json());
 };
 
   const addPost = (post) => {
