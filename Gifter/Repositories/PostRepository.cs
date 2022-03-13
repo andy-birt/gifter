@@ -47,7 +47,6 @@ namespace Gifter.Repositories
             }
         }
 
-        // Gets the posts with comments but no user profile data available as of yet
         public List<Post> GetAllWithComments()
         {
             using (var conn = Connection)
@@ -57,8 +56,10 @@ namespace Gifter.Repositories
                 {
                     cmd.CommandText = SelectPostUserStatement()
                                     + WithComments()
+                                    + WithCommentsUser()
                                     + FromPostJoinUser()
                                     + JoinComments()
+                                    + JoinCommentingUsers()
                                     + OrderByPostDateCreated();
 
                     //    "SELECT p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated,
@@ -67,10 +68,13 @@ namespace Gifter.Repositories
                     //            up.Name, up.Bio, up.Email, up.DateCreated AS UserProfileDateCreated,
                     //            up.ImageUrl AS UserProfileImageUrl,
 
-                    //            c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId
+                    //            c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId,
+                    //            cu.Name AS CommentsUserName, cu.Bio AS CommentsUserBio, cu.Email AS CommentsUserEmail,
+                    //            cu.DateCreated AS CommentsUserDateCreated, cu.ImageUrl AS CommentsUserImageUrl
                     //     FROM Post p
                     //          LEFT JOIN UserProfile up ON p.UserProfileId = up.id
                     //          LEFT JOIN Comment c on c.PostId = p.id
+                    //          LEFT JOIN UserProfile cu On c.UserProfileId = cu.id
                     //     ORDER BY p.DateCreated"
 
                     var reader = cmd.ExecuteReader();
@@ -405,7 +409,15 @@ namespace Gifter.Repositories
                 Id = DbUtils.GetInt(reader, "CommentId"),
                 Message = DbUtils.GetString(reader, "Message"),
                 PostId = postId,
-                UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId")
+                UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId"),
+                UserProfile = new UserProfile()
+                {
+                    Id = DbUtils.GetInt(reader, "CommentUserProfileId"),
+                    Name = DbUtils.GetString(reader, "CommentsUserName"),
+                    Email = DbUtils.GetString(reader, "CommentsUserEmail"),
+                    DateCreated = DbUtils.GetDateTime(reader, "CommentsUserDateCreated"),
+                    ImageUrl = DbUtils.GetString(reader, "CommentsUserImageUrl"),
+                }
             };
         }
 
@@ -452,6 +464,22 @@ namespace Gifter.Repositories
         }
 
         /// <summary>
+        ///  An addition to the Post/User Select statement which pulls the necessary UserProfile related to Comment columns.
+        ///  Use this in addition to SelectPostUserStatement().
+        /// </summary>
+        /// <value>
+        ///     cu.Name AS CommentsUserName, cu.Bio AS CommentsUserBio, cu.Email AS CommentsUserEmail, cu.DateCreated AS CommentsUserDateCreated, cu.ImageUrl AS CommentsUserImageUrl
+        /// </value>
+        /// <returns>An additional partial SQL command string to use with SelectPostUserStatement().</returns>
+        private string WithCommentsUser()
+        {
+            return @",
+
+                    cu.Name AS CommentsUserName, cu.Bio AS CommentsUserBio, cu.Email AS CommentsUserEmail, cu.DateCreated AS CommentsUserDateCreated, cu.ImageUrl AS CommentsUserImageUrl
+                    ";
+        }
+
+        /// <summary>
         ///  The FROM sequence of the SQL SELECT statement. It can complete a SQL statement when used with SelectPostUserStatement().
         /// </summary>
         /// <value>
@@ -476,6 +504,19 @@ namespace Gifter.Repositories
         private string JoinComments()
         {
             return @"LEFT JOIN Comment c on c.PostId = p.id
+                    ";
+        }
+
+        /// <summary>
+        ///  A LEFT JOIN UserProfile statement for joining onto an existing command string. This one is for getting the user who posted the comment
+        /// </summary>
+        /// <value>
+        ///   LEFT JOIN Comment c on c.PostId = p.id
+        /// </value>
+        /// <returns>A partial SQL command string.</returns>
+        private string JoinCommentingUsers()
+        {
+            return @"LEFT JOIN UserProfile cu On c.UserProfileId = cu.id
                     ";
         }
 
