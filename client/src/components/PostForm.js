@@ -24,7 +24,8 @@ const PostForm = () => {
   };
 
   return (
-    <Container>
+    <Container className="pt-5">
+      <h2><span id="action">Create</span> Post</h2>
       <Form inline>
         <FormGroup floating>
           <Input
