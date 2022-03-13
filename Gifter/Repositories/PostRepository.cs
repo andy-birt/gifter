@@ -148,8 +148,10 @@ namespace Gifter.Repositories
                 {
                     cmd.CommandText = SelectPostUserStatement()
                                     + WithComments()
+                                    + WithCommentsUser()
                                     + FromPostJoinUser()
                                     + JoinComments()
+                                    + JoinCommentingUsers()
                                     + "WHERE p.Id = @Id";
 
                     // "SELECT p.Title, p.Caption, p.DateCreated AS PostDateCreated, p.ImageUrl AS PostImageUrl, p.UserProfileId AS PostUserProfileId,
