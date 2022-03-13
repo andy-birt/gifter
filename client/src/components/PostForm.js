@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import { PostContext } from "../providers/PostProvider";
+import { useNavigate } from "react-router-dom";
 
 const PostForm = () => {
 
@@ -11,6 +12,8 @@ const PostForm = () => {
 
   const { addPost, getAllPosts } = useContext(PostContext);
 
+  const navigate = useNavigate();
+
   const handleChangeInput = (e) => {
     const newPostValue = { ...post };
     newPostValue[e.target.id] = e.target.value;
@@ -19,8 +22,7 @@ const PostForm = () => {
 
   const handleSubmitPost = () => {
     addPost({ ...post, dateCreated: new Date().toISOString() })
-    .then(getAllPosts);
-    setPost(newPost);
+    .then(() => navigate("/"));
   };
 
   return (

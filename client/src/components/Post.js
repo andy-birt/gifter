@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Card, CardImg, CardBody, Row, Col, ListGroup } from "reactstrap";
 import Comment from "./Comment";
 
@@ -13,7 +14,9 @@ const Post = ({ post }) => {
             <CardBody>
               <p className="text-left px-2">Posted by: {post.userProfile.name}</p>
               <p className="text-left px-2">
-                <strong>{post.title}</strong>
+                <Link to={`/posts/${post.id}`}>
+                  <strong>{post.title}</strong>
+                </Link>
               </p>
               <p>{post.caption}</p>
             </CardBody>
