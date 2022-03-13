@@ -9,7 +9,7 @@ The [project](https://github.com/NewForce-at-Mountwest/bangazon-inc/blob/master/
 
 Testing the API functionality can be done with the built-in testing tool Swagger UI when running the project in Debug mode or without 
 just make sure to use a URL like `https://localhost:{port}/swagger/index.html` in your preferred browser. Swagger is really helpful for seeing which endpoints to use.
-Otherwise you can use [Postman](https://www.postman.com/downloads/) to test the API if you're into that.
+Otherwise you can use [Postman](https://www.postman.com/downloads/) to test the API if you're into that, which in that case I would recommend running the server in Debug mode with the Gifter option selected which will run on port 5001 for https and 5000 for http.
 
 ## Seed Data
 
