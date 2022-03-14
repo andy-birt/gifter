@@ -13,6 +13,8 @@ const ApplicationViews = () => {
 
       <Route path="/posts/add" element={<PostForm />} />
 
+      <Route path="/posts/:id/edit" element={<PostForm />} />
+
       <Route path="/posts/search" element={<SearchPosts />} />
 
       <Route path="/posts/:id" element={<PostDetails />} />

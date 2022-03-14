@@ -1,7 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import { PostContext } from "../providers/PostProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import EditDeletePost from "./EditDeletePost";
 
 const PostForm = () => {
 
@@ -10,7 +11,11 @@ const PostForm = () => {
 
   const [post, setPost] = useState(newPost);
 
-  const { addPost, getAllPosts } = useContext(PostContext);
+  const [action, setAction] = useState("Create");
+
+  const { addPost, getPostToEdit, editPost } = useContext(PostContext);
+
+  const { id } = useParams();
 
   const navigate = useNavigate();
 
@@ -21,13 +26,37 @@ const PostForm = () => {
   };
 
   const handleSubmitPost = () => {
-    addPost({ ...post, dateCreated: new Date().toISOString() })
-    .then(() => navigate("/"));
+    if (id) {
+      editPost(post).then(() => navigate(`/posts/${id}`));
+    } else {
+      addPost({ ...post, dateCreated: new Date().toISOString() })
+      .then(() => navigate("/"));
+    }
   };
+
+  useEffect(() => {
+    setAction("Create");
+    if (id) {
+      
+      //* It's typical to just say .then(setPost) but I didn't need all the data returned.
+      //* There's an extra User object and a Comments array that I didn't want as part of the post state.
+      
+      getPostToEdit(id)
+        .then( p => setPost({ 
+                      id: p.id,
+                      title: p.title, 
+                      caption: p.caption, 
+                      imageUrl: p.imageUrl, 
+                      dateCreated: p.dateCreated,
+                      userProfileId: p.userProfileId
+                    }));
+      setAction("Edit");
+    }
+  }, [id]);
 
   return (
     <Container className="pt-5">
-      <h2><span id="action">Create</span> Post</h2>
+      <h2>{action} Post</h2>
       <Form inline>
         <FormGroup floating>
           <Input

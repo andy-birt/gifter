@@ -27,6 +27,10 @@ export const PostProvider = (props) => {
     return fetch(`/api/post/${id}/getwithcomments`).then((res) => res.json());
   };
 
+  const getPostToEdit = (id) => {
+    return fetch(`/api/post/${id}`).then((res) => res.json());
+  }
+
   const addPost = (post) => {
     return fetch("/api/post", {
       method: "POST",
@@ -37,8 +41,18 @@ export const PostProvider = (props) => {
     });
   };
 
+  const editPost = (post) => {
+    return fetch(`/api/post/${post.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(post)
+    });
+  };
+
   return (
-    <PostContext.Provider value={{ posts, getAllPosts, getPost, addPost, getAllPostsBySearch, getAllPostsByUser }}>
+    <PostContext.Provider value={{ posts, getAllPosts, getPost, getPostToEdit, addPost, editPost, getAllPostsBySearch, getAllPostsByUser }}>
       {props.children}
     </PostContext.Provider>
   );
