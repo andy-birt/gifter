@@ -12,7 +12,7 @@ const Post = ({ post }) => {
           </Col>
           <Col>
             <CardBody>
-              <p className="text-left px-2">Posted by: {post.userProfile.name}</p>
+              <p className="text-left px-2">Posted by: <Link to={`/users/${post.userProfileId}`}>{post.userProfile.name}</Link></p>
               <p className="text-left px-2">
                 <Link to={`/posts/${post.id}`}>
                   <strong>{post.title}</strong>

@@ -4,6 +4,7 @@ import PostList from "./PostList";
 import PostForm from "./PostForm";
 import SearchPosts from "./SearchPosts";
 import PostDetails from "./PostDetails";
+import UserPosts from "./UserPosts";
 
 const ApplicationViews = () => {
   return (
@@ -14,7 +15,9 @@ const ApplicationViews = () => {
 
       <Route path="/posts/search" element={<SearchPosts />} />
 
-      <Route path="/posts/:id" element={<PostDetails />}/>
+      <Route path="/posts/:id" element={<PostDetails />} />
+
+      <Route path="/users/:id" element={<UserPosts />} />
     </Routes>
   );
 };

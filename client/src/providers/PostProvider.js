@@ -18,9 +18,14 @@ export const PostProvider = (props) => {
       .then(setPosts);
   };
 
+  const getAllPostsByUser = (id) => {
+    return fetch(`/api/userprofile/${id}/getwithposts`)
+      .then(res => res.json());
+  };
+
   const getPost = (id) => {
     return fetch(`/api/post/${id}/getwithcomments`).then((res) => res.json());
-};
+  };
 
   const addPost = (post) => {
     return fetch("/api/post", {
@@ -33,7 +38,7 @@ export const PostProvider = (props) => {
   };
 
   return (
-    <PostContext.Provider value={{ posts, getAllPosts, getPost, addPost, getAllPostsBySearch }}>
+    <PostContext.Provider value={{ posts, getAllPosts, getPost, addPost, getAllPostsBySearch, getAllPostsByUser }}>
       {props.children}
     </PostContext.Provider>
   );
