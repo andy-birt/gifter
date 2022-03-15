@@ -1,10 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import PostList from "./PostList";
-import PostForm from "./PostForm";
-import SearchPosts from "./SearchPosts";
-import PostDetails from "./PostDetails";
-import UserPosts from "./UserPosts";
+import PostList from "../Post/PostList";
+import PostForm from "../Post/PostForm";
+import PostDetails from "../Post/PostDetails";
+import UserPosts from "../Post/UserPosts";
 
 const ApplicationViews = () => {
   return (
@@ -13,9 +12,9 @@ const ApplicationViews = () => {
 
       <Route path="/posts/add" element={<PostForm />} />
 
-      <Route path="/posts/:id/edit" element={<PostForm />} />
+      <Route path="/posts/results" element={<PostList />} />
 
-      <Route path="/posts/search" element={<SearchPosts />} />
+      <Route path="/posts/:id/edit" element={<PostForm />} />
 
       <Route path="/posts/:id" element={<PostDetails />} />
 

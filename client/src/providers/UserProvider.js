@@ -8,7 +8,7 @@ export const UserProvider = (props) => {
 
   //! For now we are going to log in as a certain user to implement features of posts, such as editing and deleting own posts
   useEffect(() => {
-    return fetch('/api/userprofile/3').then(res => res.json()).then(setCurrentUser);
+    return fetch('/api/userprofile/1').then(res => res.json()).then(setCurrentUser);
   }, []);
   
 

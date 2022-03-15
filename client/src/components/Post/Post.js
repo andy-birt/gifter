@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardImg, CardBody, Row, Col, ListGroup } from "reactstrap";
-import { UserContext } from "../providers/UserProvider";
-import Comment from "./Comment";
+import { UserContext } from "../../providers/UserProvider";
+import Comment from "../Comment/Comment";
 import EditDeletePost from "./EditDeletePost";
 
 const Post = ({ post }) => {
@@ -32,7 +32,6 @@ const Post = ({ post }) => {
           {post.comments.map( comment => <Comment key={comment.id} comment={comment} />)}
         </ListGroup>
       </Card>
-    
   );
 };
 

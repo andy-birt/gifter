@@ -2,8 +2,8 @@ import React from "react";
 import './App.css';
 import { PostProvider } from "./providers/PostProvider";
 import { UserProvider } from "./providers/UserProvider";
-import ApplicationViews from "./components/ApplicationViews";
-import Header from "./components/Header";
+import ApplicationViews from "./components/Layout/ApplicationViews";
+import Header from "./components/Layout/Header";
 
 function App() {
   return (
