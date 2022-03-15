@@ -56,8 +56,19 @@ export const PostProvider = (props) => {
     .then(getAllPosts);
   };
 
+  //* Yes I'm adding the comment functionality in post provider since the comments are developed in the context of a post anyway
+  const addCommentToPost = (comment) => {
+    return fetch(`api/comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(comment)
+    }).then(getAllPosts);
+  };
+
   return (
-    <PostContext.Provider value={{ posts, getAllPosts, getPost, getPostToEdit, addPost, editPost, deletePost, getAllPostsBySearch, getAllPostsByUser }}>
+    <PostContext.Provider value={{ posts, getAllPosts, getPost, getPostToEdit, addPost, editPost, deletePost, getAllPostsBySearch, getAllPostsByUser, addCommentToPost }}>
       {props.children}
     </PostContext.Provider>
   );

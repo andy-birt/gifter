@@ -1,14 +1,19 @@
 import React, { useContext, useState } from "react";
 import { Form, Input,  Button, InputGroup } from "reactstrap";
+import { PostContext } from "../../providers/PostProvider";
 import { UserContext } from "../../providers/UserProvider";
 
 const CommentForm = ({ postId }) => {
 
   const { currentUser } = useContext(UserContext);
+  const { addCommentToPost } = useContext(PostContext);
+
   //* Just make a state for the message of the comment
   const [message, setMessage] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    //? Clear the input field
+    e.target.previousSibling.value = "";
     //* Handle comment creation in the submit function, seems to work better.
     const newComment = {
       postId,
@@ -16,7 +21,7 @@ const CommentForm = ({ postId }) => {
       userProfileId: currentUser.id
     };
     
-    // return createComment
+    addCommentToPost(newComment);
   };
 
   return (

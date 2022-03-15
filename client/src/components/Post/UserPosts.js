@@ -28,7 +28,7 @@ const UserPosts = () => {
           <CardText>{user.bio}</CardText>
         </Col>
       </Row>
-      {user.posts.map(post => <Post key={post.id} post={post} />)}
+      {user.posts && user.posts.map(post => <Post key={post.id} post={post} />)}
     </Container>
   );
 };
