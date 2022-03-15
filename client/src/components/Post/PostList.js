@@ -22,7 +22,7 @@ const PostList = () => {
       {posts.map((post) => (
         <div key={post.id}>
           <Post  post={post} />
-          {post.comments.length > 0 && <CommentForm  />}
+          {post.comments.length > 0 && <CommentForm postId={post.id} />}
         </div>
       ))}
     </div>
