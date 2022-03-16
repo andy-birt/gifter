@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Gifter.Repositories;
 
 namespace Gifter.Controllers
@@ -16,8 +17,9 @@ namespace Gifter.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(int postId)
+        public IActionResult Post(Dictionary<string, int> like)
         {
+            int postId = like["postId"];
             _likeRepo.Add(postId);
             return NoContent();
         }
