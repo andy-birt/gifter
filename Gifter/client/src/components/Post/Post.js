@@ -4,6 +4,7 @@ import { Card, CardImg, CardBody, Row, Col, ListGroup } from "reactstrap";
 import { UserContext } from "../../providers/UserProvider";
 import Comment from "../Comment/Comment";
 import EditDeletePost from "./EditDeletePost";
+import Like from "./Like";
 
 const Post = ({ post }) => {
   
@@ -24,6 +25,11 @@ const Post = ({ post }) => {
                 </Link>
               </p>
               <p className="text-left px-2">{post.caption}</p>
+              <Like likes={post.likes} />
+              {' '}
+              {/**
+               //* If this post belongs to current user give them options to edit or delete 
+               **/}
               { currentUser.id === post.userProfileId && <EditDeletePost id={post.id} /> }
             </CardBody>
           </Col>

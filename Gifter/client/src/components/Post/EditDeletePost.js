@@ -16,15 +16,15 @@ const EditDeletePost = ({ id }) => {
   };
 
   return (
-    <div className="text-left px-2">
+    <>
       <Link to={`/posts/${id}/edit`} className="btn btn-warning">
-        <i className="bi bi-pencil-square"></i>
+        <i className="bi bi-pencil-square mx-2"></i>
       </Link>
       {' '}
       <Button className="btn btn-danger" onClick={() => handleDelete(id)}>
-        <i className="bi bi-trash"></i>
+        <i className="bi bi-trash mx-2"></i>
       </Button>
-    </div>
+    </>
   );
 };
 
