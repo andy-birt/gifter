@@ -56,10 +56,16 @@ namespace Gifter.Repositories
                 {
                     cmd.CommandText = SelectPostUserStatement()
                                     + WithComments()
-                                    + WithCommentsUser()
+                                    + WithCommentsUser() + ", "
+                                    + "COUNT(l.PostId) AS 'Likes'"
                                     + FromPostJoinUser()
                                     + JoinComments()
                                     + JoinCommentingUsers()
+                                    + @"GROUP BY p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
+                                                 up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl, 
+                                                 c.Id, c.Message, c.UserProfileId, 
+                                                 cu.Name, cu.Bio, cu.Email, cu.DateCreated, cu.ImageUrl,
+                                                 l.PostId"
                                     + OrderByPostDateCreated();
 
                     //    "SELECT p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated,
@@ -70,11 +76,17 @@ namespace Gifter.Repositories
 
                     //            c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId,
                     //            cu.Name AS CommentsUserName, cu.Bio AS CommentsUserBio, cu.Email AS CommentsUserEmail,
-                    //            cu.DateCreated AS CommentsUserDateCreated, cu.ImageUrl AS CommentsUserImageUrl
+                    //            cu.DateCreated AS CommentsUserDateCreated, cu.ImageUrl AS CommentsUserImageUrl,
+                    //            COUNT(l.PostId) AS 'Likes'
                     //     FROM Post p
                     //          LEFT JOIN UserProfile up ON p.UserProfileId = up.id
                     //          LEFT JOIN Comment c on c.PostId = p.id
                     //          LEFT JOIN UserProfile cu On c.UserProfileId = cu.id
+                    //     GROUP BY p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
+                    //              up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl, 
+                    //              c.Id, c.Message, c.UserProfileId, 
+                    //              cu.Name, cu.Bio, cu.Email, cu.DateCreated, cu.ImageUrl,
+                    //              l.PostId
                     //     ORDER BY p.DateCreated"
 
                     var reader = cmd.ExecuteReader();
