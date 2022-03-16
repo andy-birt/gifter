@@ -1,18 +1,29 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "reactstrap";
 import { PostContext } from "../../providers/PostProvider";
 
 const Like = ({ likes, postId }) => {
 
+
   const { addLikeToPost } = useContext(PostContext);
 
-  const handleLike = () => {
-    addLikeToPost({ postId });
-  };
+  const { id } = useParams();
 
-  useEffect(() => {
-    console.log(`Post has ${likes} likes`)
-  }, [addLikeToPost]);
+  const handleLike = () => {
+    switch (window.location.pathname) {
+      case "/post/results":
+        console.log("liked in search");
+        break;
+      case `/posts/${id}`:
+        console.log("liked in details?")
+        break;
+      default:
+        console.log("home... root")
+        break;
+    }
+    // addLikeToPost({ postId });
+  };
 
   return (
     <Button onClick={handleLike}>

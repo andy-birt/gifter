@@ -7,7 +7,7 @@ import EditDeletePost from "./EditDeletePost";
 import Like from "./Like";
 
 const Post = ({ post }) => {
-  
+
   const { currentUser } = useContext(UserContext);
 
   return (

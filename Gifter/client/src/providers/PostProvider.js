@@ -67,7 +67,7 @@ export const PostProvider = (props) => {
     }).then(getAllPosts);
   };
 
-  //* Add a like to the post
+  //* Add a like to the post... this is where things get tricky
   const addLikeToPost = (postId) => {
     return fetch(`/api/like`, {
       method: "POST",
@@ -75,7 +75,11 @@ export const PostProvider = (props) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(postId)
-    }).then(getAllPosts);
+    }).then(() => {
+      switch (window.location.pathname) {
+
+      }
+    });
   };
 
   return (
