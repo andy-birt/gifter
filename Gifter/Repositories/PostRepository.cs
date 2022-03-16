@@ -56,16 +56,13 @@ namespace Gifter.Repositories
                 {
                     cmd.CommandText = SelectPostUserStatement()
                                     + WithComments()
-                                    + WithCommentsUser() + ", "
-                                    + "COUNT(l.PostId) AS 'Likes'"
+                                    + WithCommentsUser()
+                                    + WithLikes()
                                     + FromPostJoinUser()
                                     + JoinComments()
                                     + JoinCommentingUsers()
-                                    + @"GROUP BY p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
-                                                 up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl, 
-                                                 c.Id, c.Message, c.UserProfileId, 
-                                                 cu.Name, cu.Bio, cu.Email, cu.DateCreated, cu.ImageUrl,
-                                                 l.PostId"
+                                    + JoinLikes()
+                                    + GroupByPostProperties()
                                     + OrderByPostDateCreated();
 
                     //    "SELECT p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated,
@@ -82,6 +79,7 @@ namespace Gifter.Repositories
                     //          LEFT JOIN UserProfile up ON p.UserProfileId = up.id
                     //          LEFT JOIN Comment c on c.PostId = p.id
                     //          LEFT JOIN UserProfile cu On c.UserProfileId = cu.id
+                    //          LEFT JOIN[Like] l on l.PostId = p.Id
                     //     GROUP BY p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
                     //              up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl, 
                     //              c.Id, c.Message, c.UserProfileId, 
@@ -372,6 +370,7 @@ namespace Gifter.Repositories
                 DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
                 ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
                 UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
+                Likes = DbUtils.GetInt(reader, "Likes"),
                 UserProfile = new UserProfile()
                 {
                     Id = DbUtils.GetInt(reader, "PostUserProfileId"),
@@ -399,6 +398,7 @@ namespace Gifter.Repositories
                 DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
                 ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
                 UserProfileId = DbUtils.GetInt(reader, "PostUserProfileId"),
+                Likes = DbUtils.GetInt(reader, "Likes"),
                 UserProfile = new UserProfile()
                 {
                     Id = DbUtils.GetInt(reader, "PostUserProfileId"),
@@ -495,6 +495,21 @@ namespace Gifter.Repositories
         }
 
         /// <summary>
+        ///  An addition to the Post/User Select statement which pulls the column with the amount of likes for a Post.
+        ///  Use this in addition to SelectPostUserStatement().
+        /// </summary>
+        /// <value>
+        ///     COUNT(l.PostId) AS 'Likes'
+        /// </value>
+        /// <returns>An additional partial SQL command string to use with SelectPostUserStatement().</returns>
+        private string WithLikes()
+        {
+            return @", 
+                     COUNT(l.PostId) AS 'Likes'
+                    ";
+        }
+
+        /// <summary>
         ///  The FROM sequence of the SQL SELECT statement. It can complete a SQL statement when used with SelectPostUserStatement().
         /// </summary>
         /// <value>
@@ -532,6 +547,33 @@ namespace Gifter.Repositories
         private string JoinCommentingUsers()
         {
             return @"LEFT JOIN UserProfile cu On c.UserProfileId = cu.id
+                    ";
+        }
+
+        private string JoinLikes()
+        {
+            return @"LEFT JOIN[Like] l on l.PostId = p.Id
+                    ";
+        }
+
+        /// <summary>
+        ///  A GROUP BY statement to use when getting Post with User, Comments, and Likes count
+        /// </summary>
+        /// <value>
+        ///   GROUP BY p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
+        ///            up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl, 
+        ///            c.Id, c.Message, c.UserProfileId, 
+        ///            cu.Name, cu.Bio, cu.Email, cu.DateCreated, cu.ImageUrl,
+        ///            l.PostId
+        /// </value>
+        /// <returns>A partial SQL command string.</returns>
+        private string GroupByPostProperties()
+        {
+            return @"GROUP BY p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
+                              up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl, 
+                              c.Id, c.Message, c.UserProfileId, 
+                              cu.Name, cu.Bio, cu.Email, cu.DateCreated, cu.ImageUrl,
+                              l.PostId
                     ";
         }
 
