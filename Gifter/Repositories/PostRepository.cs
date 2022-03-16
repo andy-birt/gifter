@@ -205,16 +205,26 @@ namespace Gifter.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     var sql = SelectPostUserStatement()
+                            + WithLikes()
                             + FromPostJoinUser()
-                            + "WHERE p.Title LIKE @Criterion OR p.Caption LIKE @Criterion";
+                            + JoinLikes()
+                            + @"WHERE p.Title LIKE @Criterion OR p.Caption LIKE @Criterion
+                                GROUP BY p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
+                                         up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl,
+                                         l.PostId";
 
                     // "SELECT p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated, 
                     //         p.ImageUrl AS PostImageUrl, p.UserProfileId,
 
                     //         up.Name, up.Bio, up.Email, up.DateCreated AS UserProfileDateCreated, 
-                    //         up.ImageUrl AS UserProfileImageUrl
+                    //         up.ImageUrl AS UserProfileImageUrl,
+                    //         COUNT(l.PostId) AS 'Likes'
                     //  FROM Post p 
                     //       LEFT JOIN UserProfile up ON p.UserProfileId = up.id
+                    //       LEFT JOIN [Like] l ON l.PostId = p.Id
+                    //  GROUP BY p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
+                    //           up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl,
+                    //           l.PostId"
                     //  WHERE p.Title LIKE @Criterion OR p.Caption LIKE @Criterion";
 
                     if (sortDescending)
