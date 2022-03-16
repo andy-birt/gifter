@@ -67,8 +67,24 @@ export const PostProvider = (props) => {
     }).then(getAllPosts);
   };
 
+  //* Add a like to the post
+  const addLikeToPost = (postId) => {
+    return fetch(`/api/like`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(postId)
+    }).then(getAllPosts);
+  };
+
   return (
-    <PostContext.Provider value={{ posts, getAllPosts, getPost, getPostToEdit, addPost, editPost, deletePost, getAllPostsBySearch, getAllPostsByUser, addCommentToPost }}>
+    <PostContext.Provider value={{ 
+      posts, getAllPosts, getPost, getPostToEdit, 
+      addPost, editPost, deletePost, 
+      getAllPostsBySearch, getAllPostsByUser, 
+      addCommentToPost, addLikeToPost 
+    }}>
       {props.children}
     </PostContext.Provider>
   );

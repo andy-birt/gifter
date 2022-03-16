@@ -25,7 +25,7 @@ const Post = ({ post }) => {
                 </Link>
               </p>
               <p className="text-left px-2">{post.caption}</p>
-              <Like likes={post.likes} />
+              <Like likes={post.likes} postId={post.id} />
               {' '}
               {/**
                //* If this post belongs to current user give them options to edit or delete 
