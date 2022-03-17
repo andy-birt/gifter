@@ -14,7 +14,7 @@ export const PostProvider = (props) => {
   //* State for a search post query
   const [query, setQuery] = useState("");
 
-  const { setUser } = useContext(UserContext);
+  // const { setUser } = useContext(UserContext);
 
   // Add a function to search posts using a query
   const getAllPostsBySearch = (q) => {
@@ -33,7 +33,7 @@ export const PostProvider = (props) => {
     return fetch(`/api/userprofile/${id}/getwithposts`)
       .then(res => res.json())
       .then(user => {
-        setUser(user);
+        // setUser(user);
         setPosts(user.posts);
       });
   };

@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 export const UserContext = createContext();
 
@@ -6,21 +6,26 @@ export const UserProvider = (props) => {
 
   //* This state controls the user that currentUser interacts with
   const [user, setUser] = useState();
-  
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const getCurrentUser = () => {
-    const currentUser = localStorage.getItem("gifterUser");
-    return currentUser;
-  };
+  // const [currentUser, setCurrentUser] = useState({});
+
+  // useEffect(() => {
+  //   const stringifiedUser = localStorage.getItem("gifterUser");
+  //   const currentUser = JSON.parse(stringifiedUser);
+    
+  //   getUserByEmail(currentUser.email).then(setCurrentUser);
+    
+  //   return () => {
+  //     setCurrentUser({});
+  //   }
+  // }, []);
 
   const login = (userObject) => {
-    debugger;
     fetch(`api/userprofile/getbyemail?email=${userObject.email}`)
       .then((r) => r.json())
       .then((userObjFromDB) => {
         localStorage.setItem("gifterUser", JSON.stringify(userObjFromDB));
-        setIsLoggedIn(true);
+        
       })
   };
 
@@ -35,16 +40,21 @@ export const UserProvider = (props) => {
       .then((response) => response.json())
       .then((userObject) => {
         localStorage.setItem("gifterUser", JSON.stringify(userObject));
+        
       });
   };
 
+  // const getUserByEmail = (email) => {
+  //   return fetch(`api/userprofile/getbyemail?email=${email}`)
+  //           .then((r) => r.json());
+  // }
+
   const logout = () => {
     localStorage.clear();
-    setIsLoggedIn(false);
   };
 
   return (
-    <UserContext.Provider value={{ getCurrentUser, login, register, logout, isLoggedIn, setUser, user }} >
+    <UserContext.Provider value={{ login, register, logout, setUser, user }} >
       {props.children}
     </UserContext.Provider>
   );

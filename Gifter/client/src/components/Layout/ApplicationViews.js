@@ -19,6 +19,7 @@ const ApplicationViews = () => {
       <Route path="/posts/:id" element={<PostDetails />} />
 
       <Route path="/users/:id" element={<UserPosts />} />
+        
     </Routes>
   );
 };
