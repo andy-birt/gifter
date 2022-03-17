@@ -20,12 +20,23 @@ namespace Gifter.Controllers
         {
             return Ok(_userRepository.GetAll());
         }
+
+        [HttpGet("GetByEmail")]
+        public IActionResult GetByEmail(string email)
+        {
+            var user = _userRepository.GetByEmail(email);
+            if (email == null || user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
         
         [HttpPost]
         public IActionResult Post(UserProfile user)
         {
             _userRepository.Add(user);
-            return CreatedAtAction("Get", new { id = user.Id }, user);
+            return CreatedAtAction("GetByEmail", new { email = user.Email }, user);
         }
 
         [HttpGet("{id}")]

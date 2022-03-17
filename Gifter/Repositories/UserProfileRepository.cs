@@ -83,6 +83,41 @@ namespace Gifter.Repositories
             }
         }
 
+        public UserProfile GetByEmail(string email)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                          SELECT Id, Name, Email, ImageUrl, Bio, DateCreated FROM UserProfile WHERE Email = @email";
+                    DbUtils.AddParameter(cmd, "@email", email);
+
+
+
+                    var reader = cmd.ExecuteReader();
+
+                    UserProfile user = null;
+                    if (reader.Read())
+                    {
+                        user = new UserProfile()
+                        {
+                            Id = DbUtils.GetInt(reader, "iD"),
+                            Name = DbUtils.GetString(reader, "Name"),
+                            Email = DbUtils.GetString(reader, "Email"),
+                            DateCreated = DbUtils.GetDateTime(reader, "DateCreated"),
+                            ImageUrl = DbUtils.GetString(reader, "ImageUrl")
+                        };
+                    }
+
+                    reader.Close();
+
+                    return user;
+                }
+            }
+        }
+
         public UserProfile GetByIdWithPosts(int id) // And Comments with each post
         {
             using (var conn = Connection)
