@@ -1,9 +1,20 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { UserContext } from "./UserProvider";
 
 export const PostContext = React.createContext();
 
 export const PostProvider = (props) => {
+
+  //* State for a list of posts 
   const [posts, setPosts] = useState([]);
+
+  //* State for a single post
+  const [post, setPost] = useState();
+
+  //* State for a search post query
+  const [query, setQuery] = useState("");
+
+  const { setUser } = useContext(UserContext);
 
   // Add a function to search posts using a query
   const getAllPostsBySearch = (q) => {
@@ -20,16 +31,24 @@ export const PostProvider = (props) => {
 
   const getAllPostsByUser = (id) => {
     return fetch(`/api/userprofile/${id}/getwithposts`)
-      .then(res => res.json());
+      .then(res => res.json())
+      .then(user => {
+        setUser(user);
+        setPosts(user.posts);
+      });
   };
 
   const getPost = (id) => {
-    return fetch(`/api/post/${id}/getwithcomments`).then((res) => res.json());
+    return fetch(`/api/post/${id}/getwithcomments`)
+      .then(res => res.json())
+      .then(setPost);
   };
 
   const getPostToEdit = (id) => {
-    return fetch(`/api/post/${id}`).then((res) => res.json());
-  }
+    return fetch(`/api/post/${id}`)
+      .then(res => res.json())
+      .then(setPost);
+  };
 
   const addPost = (post) => {
     return fetch("/api/post", {
@@ -53,7 +72,7 @@ export const PostProvider = (props) => {
 
   const deletePost = (postId) => {
     return fetch(`/api/post/${postId}`, { method: "DELETE" })
-    .then(getAllPosts);
+      .then(getAllPosts);
   };
 
   //* Yes I'm adding the comment functionality in post provider since the comments are developed in the context of a post anyway
@@ -67,7 +86,7 @@ export const PostProvider = (props) => {
     }).then(getAllPosts);
   };
 
-  //* Add a like to the post... this is where things get tricky
+  //* Add a like to the post
   const addLikeToPost = (postId) => {
     return fetch(`/api/like`, {
       method: "POST",
@@ -75,16 +94,13 @@ export const PostProvider = (props) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(postId)
-    }).then(() => {
-      switch (window.location.pathname) {
-
-      }
     });
   };
 
   return (
     <PostContext.Provider value={{ 
-      posts, getAllPosts, getPost, getPostToEdit, 
+      posts, post, setQuery, query, 
+      getAllPosts, getPost, getPostToEdit, 
       addPost, editPost, deletePost, 
       getAllPostsBySearch, getAllPostsByUser, 
       addCommentToPost, addLikeToPost 

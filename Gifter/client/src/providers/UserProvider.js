@@ -6,6 +6,8 @@ export const UserProvider = (props) => {
   
   const [currentUser, setCurrentUser] = useState({});
 
+  const [user, setUser] = useState();
+
   //! For now we are going to log in as a certain user to implement features of posts, such as editing and deleting own posts
   useEffect(() => {
     return fetch('/api/userprofile/1').then(res => res.json()).then(setCurrentUser);
@@ -13,7 +15,7 @@ export const UserProvider = (props) => {
   
 
   return (
-    <UserContext.Provider value={{ currentUser }} >
+    <UserContext.Provider value={{ currentUser, setUser, user }} >
       {props.children}
     </UserContext.Provider>
   );

@@ -21,7 +21,7 @@ const PostList = () => {
     <div className="container">
       {posts.map((post) => (
         <div key={post.id}>
-          <Post  post={post} />
+          <Post post={post} />
           <CommentForm postId={post.id} />
         </div>
       ))}

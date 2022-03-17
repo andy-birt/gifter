@@ -6,23 +6,34 @@ import { PostContext } from "../../providers/PostProvider";
 const Like = ({ likes, postId }) => {
 
 
-  const { addLikeToPost } = useContext(PostContext);
+  const { addLikeToPost, getAllPosts, getAllPostsByUser, getAllPostsBySearch, getPost, query } = useContext(PostContext);
 
   const { id } = useParams();
 
   const handleLike = () => {
-    switch (window.location.pathname) {
-      case "/post/results":
-        console.log("liked in search");
-        break;
-      case `/posts/${id}`:
-        console.log("liked in details?")
-        break;
-      default:
-        console.log("home... root")
-        break;
-    }
-    // addLikeToPost({ postId });
+    addLikeToPost({ postId })
+      .then(() => {
+        //* Depending on your current location when liking a post
+        //* That particular route will be requested when you like a post
+        switch (window.location.pathname) {
+          case "/posts/results":
+            //* Refresh posts in post search
+            getAllPostsBySearch(query);
+            break;
+          case `/posts/${id}`:
+            //* Refresh post in page details
+            getPost(id);
+            break;
+          case `/users/${id}`:
+            //* Refresh posts in user's post list
+            getAllPostsByUser(id);
+            break;
+          default:
+            //* Refresh posts from the '/' route 
+            getAllPosts();
+            break;
+        }
+      });
   };
 
   return (

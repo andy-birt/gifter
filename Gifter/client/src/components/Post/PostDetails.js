@@ -1,15 +1,15 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext } from "react";
 import { PostContext } from "../../providers/PostProvider";
 import { useParams } from "react-router-dom";
 import Post from "./Post";
 
 const PostDetails = () => {
-  const [post, setPost] = useState();
-  const { getPost } = useContext(PostContext);
+  //* Get state from the provider
+  const { post, getPost } = useContext(PostContext);
   const { id } = useParams();
 
   useEffect(() => {
-    getPost(id).then(setPost);
+    getPost(id);
   }, []);
 
   if (!post) {

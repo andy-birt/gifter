@@ -98,12 +98,19 @@ namespace Gifter.Repositories
                           SELECT up.Name, up.Bio, up.Email, up.DateCreated AS UserProfileDateCreated, up.ImageUrl AS UserProfileImageUrl,
                                  p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated, p.ImageUrl AS PostImageUrl,
                                  c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId,
-                                 cup.Name AS CommentersName, cup.Email AS CommentersEmail, cup.ImageUrl AS CommentersImageUrl
+                                 cup.Name AS CommentersName, cup.Email AS CommentersEmail, cup.ImageUrl AS CommentersImageUrl,
+                                 COUNT(l.PostId) AS 'Likes'
                             FROM UserProfile up
                             LEFT JOIN Post p ON up.Id = p.UserProfileId
                             LEFT JOIN Comment c ON c.PostId = p.Id
                             LEFT JOIN UserProfile cup ON c.UserProfileId = cup.Id
-                           WHERE up.Id = @Id";
+                            LEFT JOIN [Like] l ON l.PostId = p.Id
+                           WHERE up.Id = @Id
+                           GROUP BY up.Name, up.Bio, up.Email, up.DateCreated,  up.ImageUrl,
+                                 p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl,
+                                 c.Id, c.Message, c.UserProfileId,
+                                 cup.Name, cup.Email, cup.ImageUrl,
+                                 l.PostId";
 
                     DbUtils.AddParameter(cmd, "@Id", id);
 
@@ -176,6 +183,7 @@ namespace Gifter.Repositories
                                     DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
                                     ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
                                     UserProfileId = id,
+                                    Likes = DbUtils.GetInt(reader, "Likes"),
                                     UserProfile = new UserProfile()
                                     {
                                         Id = id,

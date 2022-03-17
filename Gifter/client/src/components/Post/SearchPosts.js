@@ -1,13 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, InputGroup } from "reactstrap";
 import { PostContext } from "../../providers/PostProvider";
 
 const SearchPosts = () => {
 
-  const [search, setSearch] = useState('');
-
-  const {getAllPostsBySearch} = useContext(PostContext);
+  const {getAllPostsBySearch, setQuery, query} = useContext(PostContext);
 
   const navigate = useNavigate();
 
@@ -17,10 +15,8 @@ const SearchPosts = () => {
     //* Clear the search form
     e.target[0].value = "";
     //* Get the results
-    getAllPostsBySearch(search)
+    getAllPostsBySearch(query)
     .then(() => navigate("/posts/results"));
-    //* Set to default state
-    setSearch("");
   };
 
   return (
@@ -29,7 +25,7 @@ const SearchPosts = () => {
         <Input 
           id="q"
           placeholder="Search Posts..."
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => setQuery(e.target.value)}
         />
         <Button outline color="dark" type="submit" ><i className="bi bi-search"></i></Button>
       </InputGroup>
