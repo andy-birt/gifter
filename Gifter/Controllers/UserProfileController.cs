@@ -41,6 +41,11 @@ namespace Gifter.Controllers
         [HttpPost]
         public IActionResult Post(UserProfile user)
         {
+            var foundUser = _userRepository.GetByEmail(user.Email);
+            if (foundUser != null)
+            {
+                return BadRequest();
+            }
             _userRepository.Add(user);
             return CreatedAtAction("GetByEmail", new { email = user.Email }, user);
         }
