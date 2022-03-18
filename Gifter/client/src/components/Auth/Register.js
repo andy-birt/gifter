@@ -14,7 +14,7 @@ export const Register = () => {
   // This function will run when the user has finished filling out the form and clicks submit
   const submitLoginForm = (e) => {
     e.preventDefault();
-    register({ name, email, bio, imageurl });
+    register({ name, email, bio, imageurl, dateCreated: new Date().toISOString() });
   };
 
   return (
