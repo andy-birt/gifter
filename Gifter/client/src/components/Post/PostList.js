@@ -1,15 +1,16 @@
 import React, { useContext, useEffect } from "react";
 import { PostContext } from "../../providers/PostProvider";
+import { UserContext } from "../../providers/UserProvider";
 import CommentForm from "../Comment/CommentForm";
 import Post from "./Post";
 
 const PostList = () => {
+  
   const { posts, getAllPostsByUser } = useContext(PostContext);
 
-  const  currentUser  = JSON.parse(localStorage.getItem('gifterUser'));
-
   //! I'm not sure localStorage plays well with the Context/State API
-  // const { currentUser } = useContext(UserContext);
+  //* UPDATE: I can use currentUser context state with localstorage!!
+  const { currentUser } = useContext(UserContext);
 
   useEffect(() => {
     //? So I had a situation where I would use the search bar for posts

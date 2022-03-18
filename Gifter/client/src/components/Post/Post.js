@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardImg, CardBody, Row, Col, ListGroup } from "reactstrap";
+import { UserContext } from "../../providers/UserProvider";
 import Comment from "../Comment/Comment";
 import EditDeletePost from "./EditDeletePost";
 import Like from "./Like";
 
 const Post = ({ post }) => {
 
-  const currentUser = JSON.parse(localStorage.getItem('gifterUser'));
-
   //! I'm not sure localStorage plays well with the Context/State API
-  // const { currentUser } = useContext(UserContext);
+  //* UPDATE: I can use currentUser context state with localstorage!!
+  const { currentUser } = useContext(UserContext);
 
   return (
       <Card className="mt-4">
