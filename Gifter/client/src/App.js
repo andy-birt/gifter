@@ -9,10 +9,6 @@ import { Login } from "./components/Auth/Login";
 import { Register } from "./components/Auth/Register";
 
 function App() {
-
-  // const { currentUser } = useContext(UserContext);
-  // const { posts } = useContext(PostContext);
-
   return (
     <div className="App">
       <UserProvider>
