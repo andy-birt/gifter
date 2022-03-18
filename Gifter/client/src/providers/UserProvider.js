@@ -17,12 +17,21 @@ export const UserProvider = (props) => {
   //* State that holds a list of users
   const [users, setUsers] = useState([]);
 
+  //* State that holds list of users that currentUser is subscribed to
+  const [providerUsers, setProviderUsers] = useState([]);
+
   const navigate = useNavigate();
 
   /**
    *  ------------------------------  
    ** ----- User Profile CRUD  ----- 
    *  ------------------------------
+   */
+
+  /**
+   * Function that gets users from Gifter database except the currently logged in user
+   * @author Andy
+   * @returns Promise
    */
 
   const getAllUsers = () => {
@@ -32,6 +41,19 @@ export const UserProvider = (props) => {
         const usersOtherThanCurrentUser = users.filter(u => u.id !== currentUser.id);
         setUsers(usersOtherThanCurrentUser);
       });
+  };
+
+  /**
+   * Function that gets users from Gifter database that the currently logged in user is subscribed to
+   * @author Andy
+   * @param {integer} subscriberId
+   * @returns Promise
+   */
+
+  const getAllProviderUserByCurrentUserId = (subscriberId) => {
+    return fetch(`/api/userprofile/getproviderusersbysubscriberid?subscriberid=${subscriberId}`)
+      .then(res => res.json())
+      .then(setProviderUsers);
   };
 
   /**
@@ -93,7 +115,7 @@ export const UserProvider = (props) => {
   return (
     <UserContext.Provider value={{ 
       currentUser, login, register, logout, setUser, user, users,
-      getAllUsers 
+      getAllUsers, getAllProviderUserByCurrentUserId, providerUsers
       }} >
       {props.children}
     </UserContext.Provider>

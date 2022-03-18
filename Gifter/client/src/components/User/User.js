@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Col, CardImg, CardText, Button } from "reactstrap";
 
-const User = ({ user }) => {
+const User = ({ user, providerUsers }) => {
   return (
     <Row sm="1" className="pt-5">
       <Col md="4">
@@ -12,7 +12,7 @@ const User = ({ user }) => {
         <CardText>{user.email}</CardText>
         <CardText>{user.bio}</CardText>
         <CardText>
-          <Button>Subscribe</Button>
+          {providerUsers.find(u => u.id === user.id) ? <Button>Unsubscribe</Button> : <Button>Subscribe</Button>}
         </CardText>
       </Col>
     </Row>

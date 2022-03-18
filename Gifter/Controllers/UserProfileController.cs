@@ -21,6 +21,12 @@ namespace Gifter.Controllers
             return Ok(_userRepository.GetAll());
         }
 
+        [HttpGet("GetProviderUsersBySubscriberId")]
+        public IActionResult GetProviderUsersBySubscriberId(int subscriberId)
+        {
+            return Ok(_userRepository.GetProviderUsersBySubscriberId(subscriberId));
+        }
+
         [HttpGet("GetByEmail")]
         public IActionResult GetByEmail(string email)
         {

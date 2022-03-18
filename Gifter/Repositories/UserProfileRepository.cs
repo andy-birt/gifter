@@ -262,6 +262,44 @@ namespace Gifter.Repositories
             }
         }
 
+        public List<UserProfile> GetProviderUsersBySubscriberId(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            SELECT pu.Id AS ProviderUserProfileId, pu.Name AS ProviderUserProfileName, pu.Bio AS ProviderUserProfileBio, pu.Email AS ProviderUserProfileEmail, pu.DateCreated AS ProviderUserProfileDateCreated, pu.ImageUrl AS ProviderUserProfileImageUrl
+                            FROM UserProfile pu
+                            LEFT JOIN Subscription s ON s.ProviderId = pu.Id
+                            WHERE s.SubscriberId = @Id";
+
+                    DbUtils.AddParameter(cmd, "@Id", id);
+
+                    var reader = cmd.ExecuteReader();
+
+                    List<UserProfile> users = new List<UserProfile>();
+                    while (reader.Read())
+                    {
+                        users.Add(new UserProfile()
+                        {
+                            Id = DbUtils.GetInt(reader, "ProviderUserProfileId"),
+                            Name = DbUtils.GetString(reader, "ProviderUserProfileName"),
+                            Email = DbUtils.GetString(reader, "ProviderUserProfileEmail"),
+                            ImageUrl = DbUtils.GetString(reader, "ProviderUserProfileImageUrl"),
+                            Bio = DbUtils.GetString(reader, "ProviderUserProfileBio"),
+                            DateCreated = DbUtils.GetDateTime(reader, "ProviderUserProfileDateCreated")
+                        });
+                    }
+
+                    reader.Close();
+
+                    return users;
+                }
+            }
+        }
+
         public void Add(UserProfile user)
         {
             using (var conn = Connection)
