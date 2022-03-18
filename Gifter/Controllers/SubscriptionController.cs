@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Gifter.Repositories;
+using System.Collections.Generic;
 
 namespace Gifter.Controllers
 {
@@ -23,9 +24,9 @@ namespace Gifter.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int subscriberId, int providerId)
         {
-            _subscriptionRepository.Delete(id);
+            _subscriptionRepository.Delete(subscriberId, providerId);
             return NoContent();
         }
     }

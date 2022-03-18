@@ -3,6 +3,6 @@
     public interface ISubscriptionRepository
     {
         void Add(int subscriberId, int providerId);
-        void Delete(int id);
+        void Delete(int subscriberId, int providerId);
     }
 }

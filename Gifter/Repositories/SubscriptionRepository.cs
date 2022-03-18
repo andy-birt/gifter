@@ -25,7 +25,7 @@ namespace Gifter.Repositories
             }
         }
 
-        public void Delete(int id)
+        public void Delete(int subscriberId, int providerId)
         {
             using (var conn = Connection)
             {
@@ -33,9 +33,10 @@ namespace Gifter.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"DELETE FROM [Subscription]
-                                        WHERE Id = @Id";
+                                        WHERE SubscriberId = @subscriberId AND ProviderId = @providerId";
 
-                    DbUtils.AddParameter(cmd, "@Id", id);
+                    DbUtils.AddParameter(cmd, "@subscriberId", subscriberId);
+                    DbUtils.AddParameter(cmd, "@providerId", providerId);
 
                     cmd.ExecuteNonQuery();
                 }

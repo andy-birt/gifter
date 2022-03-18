@@ -20,6 +20,7 @@ export const UserProvider = (props) => {
   //* State that holds list of users that currentUser is subscribed to
   const [providerUsers, setProviderUsers] = useState([]);
 
+  //* The navigate function is primarily used in redirecting after creating a new user or loggin in
   const navigate = useNavigate();
 
   /**
@@ -61,6 +62,9 @@ export const UserProvider = (props) => {
    ** ----- Authentication  ----- 
    *  ---------------------------
    */
+
+  //? I don't know what it is about trying to set currentUser state that is inconsistent
+  //? Sometimes it works and sometimes it doesn't
 
   /**
    * Function that gets user from Gifter database using fetch
@@ -120,10 +124,46 @@ export const UserProvider = (props) => {
     localStorage.clear();
   };
 
+  /**
+   *  --------------------------  
+   ** ----- Subscriptions  ----- 
+   *  --------------------------
+   */
+
+  /**
+   * Creates a new subscription record in the database between a Subscriber User and Provider User
+   * @param {integer} subscriberId 
+   * @param {integer} providerId 
+   * @returns Promise
+   */
+  const addSubscription = (subscriberId, providerId) => {
+    return fetch(`/api/subscription?subscriberid=${subscriberId}&providerid=${providerId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ subscriberId, providerId })
+    }).then(() => getAllProviderUserByCurrentUserId(currentUser.id));
+  };
+
+  /**
+   * Removes the subscription between a Subscriber User and Provider User
+   * @param {integer} subscriberId 
+   * @param {integer} providerId 
+   * @returns Promise
+   */
+
+  const removeSubscription = (subscriberId, providerId) => {
+    return fetch(`/api/subscription?subscriberid=${subscriberId}&providerid=${providerId}`, {
+      method: "DELETE"
+    }).then(() => getAllProviderUserByCurrentUserId(currentUser.id));
+  };
+
   return (
     <UserContext.Provider value={{ 
       currentUser, login, register, logout, setUser, user, users,
-      getAllUsers, getAllProviderUserByCurrentUserId, providerUsers
+      getAllUsers, getAllProviderUserByCurrentUserId, providerUsers,
+      addSubscription, removeSubscription
       }} >
       {props.children}
     </UserContext.Provider>
