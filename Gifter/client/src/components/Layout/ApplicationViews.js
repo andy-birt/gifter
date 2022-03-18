@@ -4,6 +4,7 @@ import PostList from "../Post/PostList";
 import PostForm from "../Post/PostForm";
 import PostDetails from "../Post/PostDetails";
 import UserPosts from "../Post/UserPosts";
+import UserList from "../User/UserList";
 
 const ApplicationViews = () => {
   return (
@@ -17,6 +18,8 @@ const ApplicationViews = () => {
       <Route path="/posts/:id/edit" element={<PostForm />} />
 
       <Route path="/posts/:id" element={<PostDetails />} />
+
+      <Route path="/users" element={<UserList />} />
 
       <Route path="/users/:id" element={<UserPosts />} />
         

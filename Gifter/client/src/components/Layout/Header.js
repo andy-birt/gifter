@@ -20,6 +20,11 @@ const Header = () => {
             </Link>
           </li>
           <li className="nav-item">
+            <Link to="/users" className="nav-link" >
+              Explore GiFters
+            </Link>
+          </li>
+          <li className="nav-item">
             <Link to="/posts/add" className="nav-link">
               New Post
             </Link>
