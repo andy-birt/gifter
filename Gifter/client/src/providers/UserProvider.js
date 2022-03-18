@@ -73,9 +73,12 @@ export const UserProvider = (props) => {
     fetch(`api/userprofile/getbyemail?email=${userObject.email}`)
       .then((r) => r.json())
       .then((userObjFromDB) => {
-        localStorage.setItem("gifterUser", JSON.stringify(userObjFromDB));
-        setCurrentUser(currentUserInLocalStorage);
-        navigate('/');
+        //* If NotFound is returned then we don't want to set localStorage or currentUser
+        if (!userObjFromDB.status) {
+          localStorage.setItem("gifterUser", JSON.stringify(userObjFromDB));
+          setCurrentUser(currentUserInLocalStorage);
+          navigate('/');
+        }
       })
   };
 
@@ -87,19 +90,24 @@ export const UserProvider = (props) => {
    * @returns void
    */
 
-  const register = (userObject) => {
+  const register = (userObjectFormBody) => {
     fetch("/api/userprofile", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userObject),
+      body: JSON.stringify(userObjectFormBody),
     })
       .then((response) => response.json())
       .then((userObject) => {
-        localStorage.setItem("gifterUser", JSON.stringify(userObject));
-        setCurrentUser(currentUserInLocalStorage);
-        navigate('/');
+        //* If BadRequest is returned we don't want to make user with duplicate emails in db
+        if (!userObject.status) {
+          localStorage.setItem("gifterUser", JSON.stringify(userObject));
+          setCurrentUser(currentUserInLocalStorage);
+          navigate('/');
+        } else {
+          alert(`User with email ${userObjectFormBody.email} already exists. Please enter a different email address.`);
+        }
       });
   };
 
