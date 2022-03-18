@@ -63,7 +63,7 @@ namespace Gifter.Repositories
                                     + JoinCommentingUsers()
                                     + JoinLikes()
                                     + GroupByPostProperties()
-                                    + OrderByPostDateCreated();
+                                    + OrderByAmountOfLikes();
 
                     //    "SELECT p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated,
                     //            p.ImageUrl AS PostImageUrl, p.UserProfileId AS PostUserProfileId,
@@ -85,7 +85,7 @@ namespace Gifter.Repositories
                     //              c.Id, c.Message, c.UserProfileId, 
                     //              cu.Name, cu.Bio, cu.Email, cu.DateCreated, cu.ImageUrl,
                     //              l.PostId
-                    //     ORDER BY p.DateCreated"
+                    //     ORDER BY l.PostId"
 
                     var reader = cmd.ExecuteReader();
 
@@ -166,8 +166,8 @@ namespace Gifter.Repositories
                                     + JoinLikes()
                                     + @"WHERE p.Id = @Id
                                        "
-                                    + GroupByPostProperties();
-
+                                    + GroupByPostProperties()
+                                    + OrderByAmountOfLikes();
                     // "SELECT p.Title, p.Caption, p.DateCreated AS PostDateCreated, p.ImageUrl AS PostImageUrl, p.UserProfileId AS PostUserProfileId,
                     //         up.Name, up.Email, up.DateCreated AS UserProfileDateCreated, up.ImageUrl AS UserProfileImageUrl,
                     //         c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId
@@ -601,6 +601,18 @@ namespace Gifter.Repositories
         private string OrderByPostDateCreated()
         {
             return @"ORDER BY p.DateCreated";
+        }
+
+        /// <summary>
+        ///  An ORDER BY statement which will order by a Post's 'like' count
+        /// </summary>
+        /// <value>
+        ///   ORDER BY l.PostId DESC
+        /// </value>
+        /// <returns>A partial SQL command string.</returns>
+        private string OrderByAmountOfLikes()
+        {
+            return "ORDER BY l.PostId DESC";
         }
     }
 }
