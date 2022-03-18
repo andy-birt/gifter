@@ -28,7 +28,10 @@ export const UserProvider = (props) => {
   const getAllUsers = () => {
     return fetch("/api/userprofile")
       .then(res => res.json())
-      .then(setUsers);
+      .then(users => {
+        const usersOtherThanCurrentUser = users.filter(u => u.id !== currentUser.id);
+        setUsers(usersOtherThanCurrentUser);
+      });
   };
 
   /**
