@@ -146,7 +146,7 @@ namespace Gifter.Repositories
                                  c.Id, c.Message, c.UserProfileId,
                                  cup.Name, cup.Email, cup.ImageUrl,
                                  l.PostId
-                            ORDER BY l.PostId";
+                            ORDER BY COUNT(l.PostId) DESC";
 
                     DbUtils.AddParameter(cmd, "@Id", id);
 
