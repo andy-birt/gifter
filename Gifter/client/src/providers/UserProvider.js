@@ -6,13 +6,13 @@ export const UserContext = createContext();
 export const UserProvider = (props) => {
 
   //* Get the gifterUser value stored in localStorage
-  const currentUserInLocalStorage = JSON.parse(localStorage.getItem("gifterUser"));
+  const currentUserInLocalStorage = localStorage.getItem("gifterUser");
 
   //* This state controls the user that currentUser interacts with
   const [user, setUser] = useState();
 
   //* State that uses currently logged in user via localStorage
-  const [currentUser, setCurrentUser] = useState(currentUserInLocalStorage);
+  const [currentUser, setCurrentUser] = useState(JSON.parse(currentUserInLocalStorage));
 
   //* State that holds a list of users
   const [users, setUsers] = useState([]);
@@ -80,10 +80,10 @@ export const UserProvider = (props) => {
         //* If NotFound is returned then we don't want to set localStorage or currentUser
         if (!userObjFromDB.status) {
           localStorage.setItem("gifterUser", JSON.stringify(userObjFromDB));
-          setCurrentUser(currentUserInLocalStorage);
+          setCurrentUser(userObjFromDB);
           navigate('/');
         }
-      })
+      });
   };
 
   /**
@@ -107,7 +107,7 @@ export const UserProvider = (props) => {
         //* If BadRequest is returned we don't want to make user with duplicate emails in db
         if (!userObject.status) {
           localStorage.setItem("gifterUser", JSON.stringify(userObject));
-          setCurrentUser(currentUserInLocalStorage);
+          setCurrentUser(userObject);
           navigate('/');
         } else {
           alert(`User with email ${userObjectFormBody.email} already exists. Please enter a different email address.`);
