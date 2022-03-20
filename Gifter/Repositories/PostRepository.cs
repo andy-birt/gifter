@@ -85,7 +85,7 @@ namespace Gifter.Repositories
                     //              c.Id, c.Message, c.UserProfileId, 
                     //              cu.Name, cu.Bio, cu.Email, cu.DateCreated, cu.ImageUrl,
                     //              l.PostId
-                    //     ORDER BY l.PostId"
+                    //     ORDER BY COUNT(l.PostId)"
 
                     var reader = cmd.ExecuteReader();
 
@@ -607,12 +607,12 @@ namespace Gifter.Repositories
         ///  An ORDER BY statement which will order by a Post's 'like' count
         /// </summary>
         /// <value>
-        ///   ORDER BY l.PostId DESC
+        ///   ORDER BY COUNT(l.PostId) DESC
         /// </value>
         /// <returns>A partial SQL command string.</returns>
         private string OrderByAmountOfLikes()
         {
-            return "ORDER BY l.PostId DESC";
+            return "ORDER BY COUNT(l.PostId) DESC";
         }
     }
 }
