@@ -14,7 +14,14 @@ export const PostProvider = (props) => {
   //* State for a search post query
   const [query, setQuery] = useState("");
 
-  // const { setUser } = useContext(UserContext);
+  const { currentUser, setUser } = useContext(UserContext);
+
+  //* Get Posts from the current user's feed
+  const getFeed = () => {
+    return fetch(`/api/post/feed?id=${currentUser.id}`)
+      .then(res => res.json())
+      .then(setPosts);
+  };
 
   // Add a function to search posts using a query
   const getAllPostsBySearch = (q) => {
@@ -33,7 +40,7 @@ export const PostProvider = (props) => {
     return fetch(`/api/userprofile/${id}/getwithposts`)
       .then(res => res.json())
       .then(user => {
-        // setUser(user);
+        setUser(user);
         setPosts(user.posts);
       });
   };
@@ -100,7 +107,7 @@ export const PostProvider = (props) => {
   return (
     <PostContext.Provider value={{ 
       posts, post, setQuery, query, 
-      getAllPosts, getPost, getPostToEdit, 
+      getFeed, getAllPosts, getPost, getPostToEdit, 
       addPost, editPost, deletePost, 
       getAllPostsBySearch, getAllPostsByUser, 
       addCommentToPost, addLikeToPost 

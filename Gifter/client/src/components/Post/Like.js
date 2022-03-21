@@ -6,7 +6,7 @@ import { PostContext } from "../../providers/PostProvider";
 const Like = ({ likes, postId }) => {
 
 
-  const { addLikeToPost, getAllPosts, getAllPostsByUser, getAllPostsBySearch, getPost, query } = useContext(PostContext);
+  const { addLikeToPost, getFeed, getAllPosts, getAllPostsByUser, getAllPostsBySearch, getPost, query } = useContext(PostContext);
 
   const { id } = useParams();
 
@@ -27,6 +27,10 @@ const Like = ({ likes, postId }) => {
           case `/users/${id}`:
             //* Refresh posts in user's post list
             getAllPostsByUser(id);
+            break;
+          case "/feed":
+            //* Refresh current user's feed
+            getFeed();
             break;
           default:
             //* Refresh posts from the '/' route 

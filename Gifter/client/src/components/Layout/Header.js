@@ -15,7 +15,7 @@ const Header = () => {
         <ul className="navbar-nav mr-auto">
           <SearchPosts />
           <li className="nav-item">
-            <Link to="/" className="nav-link" >
+            <Link to="/feed" className="nav-link" >
               Feed
             </Link>
           </li>

@@ -115,6 +115,85 @@ namespace Gifter.Repositories
             }
         }
 
+        public List<Post> Feed(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = SelectPostUserStatement()
+                                    + WithComments()
+                                    + WithCommentsUser()
+                                    + WithLikes()
+                                    + FromSubscriptionJoinUserJoinPost()
+                                    + JoinComments()
+                                    + JoinCommentingUsers()
+                                    + JoinLikes()
+                                    + @"WHERE s.SubscriberId = @id
+                                       "
+                                    + GroupByPostProperties()
+                                    + OrderByAmountOfLikes();
+
+                    DbUtils.AddParameter(cmd, "@id", id);
+
+                    //          SELECT
+                    //              p.Id AS PostId, p.Title, p.Caption, p.DateCreated AS PostDateCreated,
+                    //              p.ImageUrl AS PostImageUrl, p.UserProfileId AS PostUserProfileId,
+
+                    //              up.Name, up.Bio, up.Email, up.DateCreated AS UserProfileDateCreated,
+                    //              up.ImageUrl AS UserProfileImageUrl,
+
+                    //              c.Id AS CommentId, c.Message, c.UserProfileId AS CommentUserProfileId,
+                    //              cu.Name AS CommentsUserName, cu.Bio AS CommentsUserBio, cu.Email AS CommentsUserEmail,
+                    //              cu.DateCreated AS CommentsUserDateCreated, cu.ImageUrl AS CommentsUserImageUrl,
+                    //              COUNT(l.PostId) AS 'Likes'
+
+                    //          FROM Subscription s
+                    //              LEFT JOIN UserProfile up ON s.ProviderId = up.id
+                    //              LEFT JOIN Post p ON p.UserProfileId = up.id
+                    //              LEFT JOIN Comment c on c.PostId = p.id
+                    //              LEFT JOIN UserProfile cu On c.UserProfileId = cu.id
+                    //              LEFT JOIN [Like] l on l.PostId = p.Id
+
+                    //          WHERE s.SubscriberId = CURRENT_USERID
+
+                    //          GROUP BY
+                    //              p.Id, p.Title, p.Caption, p.DateCreated, p.ImageUrl, p.UserProfileId,
+                    //              up.Name, up.Bio, up.Email, up.DateCreated, up.ImageUrl,
+                    //              c.Id, c.Message, c.UserProfileId,
+                    //              cu.Name, cu.Bio, cu.Email, cu.DateCreated, cu.ImageUrl,
+                    //              l.PostId
+                    //          ORDER BY COUNT(l.PostId) DESC
+
+                    var reader = cmd.ExecuteReader();
+
+                    var posts = new List<Post>();
+                    while (reader.Read())
+                    {
+                        var postId = DbUtils.GetInt(reader, "PostId");
+
+                        var existingPost = posts.FirstOrDefault(p => p.Id == postId);
+                        if (existingPost == null)
+                        {
+                            existingPost = NewPostFromReader(postId, reader);
+
+                            posts.Add(existingPost);
+                        }
+
+                        if (DbUtils.IsNotDbNull(reader, "CommentId"))
+                        {
+                            existingPost.Comments.Add(NewCommentFromReader(postId, reader));
+                        }
+                    }
+
+                    reader.Close();
+
+                    return posts;
+                }
+            }
+        }
+
         public Post GetById(int id)
         {
             using (var conn = Connection)
@@ -536,6 +615,23 @@ namespace Gifter.Repositories
             return @"FROM Post p
                           LEFT JOIN UserProfile up ON p.UserProfileId = up.id
                           ";
+        }
+
+        /// <summary>
+        ///  The FROM sequence of the SQL SELECT statement. It can complete a SQL statement when used with SelectPostUserStatement().
+        /// </summary>
+        /// <value>
+        ///     FROM Subscription s
+        ///         LEFT JOIN UserProfile up ON s.ProviderId = up.id
+        ///         LEFT JOIN Post p ON p.UserProfileId = up.id
+        /// </value>
+        /// <returns>A partial SQL command string.</returns>
+        private string FromSubscriptionJoinUserJoinPost()
+        {
+            return @"FROM Subscription s
+                        LEFT JOIN UserProfile up ON s.ProviderId = up.id
+                        LEFT JOIN Post p ON p.UserProfileId = up.id
+                        ";
         }
 
         /// <summary>

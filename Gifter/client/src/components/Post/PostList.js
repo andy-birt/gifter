@@ -6,7 +6,7 @@ import Post from "./Post";
 
 const PostList = () => {
   
-  const { posts, getAllPostsByUser } = useContext(PostContext);
+  const { posts, getAllPostsByUser, getFeed } = useContext(PostContext);
 
   //! I'm not sure localStorage plays well with the Context/State API
   //* UPDATE: I can use currentUser context state with localstorage!!
@@ -21,6 +21,10 @@ const PostList = () => {
     if (window.location.pathname === '/'){
       getAllPostsByUser(currentUser.id);
     }
+
+    if (window.location.pathname === "/feed"){
+      getFeed();
+    }
   }, [window.location.pathname]);
 
   return (
@@ -28,7 +32,7 @@ const PostList = () => {
       {posts.map((post) => (
         <div key={post.id}>
           <Post post={post} />
-          <CommentForm postId={post.id} />
+          { window.location.pathname !== "/posts/results" && <CommentForm postId={post.id} />}
         </div>
       ))}
     </div>

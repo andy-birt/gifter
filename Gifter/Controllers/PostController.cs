@@ -50,6 +50,12 @@ namespace Gifter.Controllers
             return Ok(post);
         }
 
+        [HttpGet("feed")]
+        public IActionResult Feed(int id)
+        {
+            return Ok(_postRepository.Feed(id));
+        }
+
         [HttpGet("search")]
         public IActionResult Search(string q, bool sortDesc)
         {
